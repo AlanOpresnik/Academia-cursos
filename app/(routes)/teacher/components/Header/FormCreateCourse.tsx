@@ -13,10 +13,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { formSchema } from "./formCreateCourse.schema";
+import axios from "axios";
 import { z } from "zod";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+
 export default function FormCreateCourse() {
-
-
+  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -26,8 +29,15 @@ export default function FormCreateCourse() {
   });
 
   // 2. Define a submit handler.
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      console.log(values);
+      const res = await axios.post("/api/course", values);
+      toast("Curso creado correctamente 🎉");
+      router.push(`/teacher/${res.data.id}`);
+    } catch (error) {
+      console.error(error);
+    }
   };
   return (
     <Form {...form}>
