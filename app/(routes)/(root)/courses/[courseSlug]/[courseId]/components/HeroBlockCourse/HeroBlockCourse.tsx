@@ -28,7 +28,8 @@ export default function HeroBlockCourse({ course, purchaseCourse }: Props) {
     chapters,
   } = course;
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter()
+  const router = useRouter();
+
   const enrollCourse = async () => {
     setIsLoading(true);
     if (price === "Gratis") {
@@ -45,6 +46,16 @@ export default function HeroBlockCourse({ course, purchaseCourse }: Props) {
       } finally {
         setIsLoading(false);
       }
+    } else {
+      try {
+        const response = await axios.post(`/api/course/${id}/checkout`);
+        window.location.assign(response.data.url)
+        console.log(response)
+      } catch (error) {
+        toast.error("Error al inscribirse al curso");
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -52,7 +63,7 @@ export default function HeroBlockCourse({ course, purchaseCourse }: Props) {
     router.push(`/courses/${slug}/${chapters[0].id}`);
   };
 
-  console.log(purchaseCourse)
+  console.log(purchaseCourse);
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
       <div>
